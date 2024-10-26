@@ -17,7 +17,14 @@ COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod \
      GOARCH=${TARGETARCH} go mod download
 
+# prefetch the binaries, so that they will be cached and not downloaded on each change
+RUN go run github.com/steebchen/prisma-client-go prefetch
+
 COPY . ./
+
+# Prisma Clientを生成
+RUN go run github.com/steebchen/prisma-client-go generate --schema db/schema/schema.prisma
+
 # ビルドから不要な情報を取り除く
 # https://qiita.com/ssc-ynakamura/items/da37856f7f217d708a07
 RUN --mount=type=cache,target=/go/pkg/mod \
@@ -25,11 +32,4 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     GOARCH=${TARGETARCH} go build -o sharepods-backend -ldflags="-s -w" -trimpath ./
 
 
-####################### Run stage #######################
-# https://github.com/GoogleContainerTools/distroless
-FROM gcr.io/distroless/base-debian11
-WORKDIR /app
-
-COPY --from=builder /app/sharepods-backend /app/sharepods-backend
-
-CMD [ "/app/sharepods-backend" ]
+CMD [ "./entrypoint.sh" ]
