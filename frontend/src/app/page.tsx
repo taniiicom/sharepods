@@ -1,90 +1,93 @@
-// types/layout.ts
-export interface LayoutProps {
-  children: React.ReactNode;
+// app/page.tsx
+"use client";
+
+import { useState } from "react";
+import MusicPlayer from "./../components/playMovie";
+
+interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  url: string;
+  progress?: number;
 }
 
-// components/MobileLayout.tsx
-import React from "react";
-// import { LayoutProps } from "../types/layout";
+export default function MusicPage() {
+  const [currentProgress, setCurrentProgress] = useState<number>(0);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
 
-const MobileLayout: React.FC<LayoutProps> = ({ children }) => {
+  const songs: Song[] = [
+    {
+      id: "1",
+      title: "Never Gonna Give You Up",
+      artist: "Rick Astley",
+      url: "https://www.youtube.com/watch?v=fhTFysCtF6g",
+    },
+  ];
+
+  const handleSongSelect = (song: Song) => {
+    setSelectedSong(song);
+    setCurrentProgress(song.progress || 0);
+  };
+
+  const handleProgressChange = async (progress: number) => {
+    setCurrentProgress(progress);
+
+    if (selectedSong) {
+      try {
+        await fetch("/api/progress", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            songId: selectedSong.id,
+            progress,
+          }),
+        });
+      } catch (error) {
+        console.error("Failed to save progress:", error);
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 flex items-center px-4 z-50">
-        <div className="flex-1">
-          <h1 className="text-lg font-semibold">SharePods</h1>
+    <div className="min-h-screen bg-gray-100">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Music Player</h1>
+
+        {/* Song List */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-20">
+          <h2 className="text-xl font-semibold mb-4">Songs</h2>
+          <div className="space-y-4">
+            {songs.map((song) => (
+              <div
+                key={song.id}
+                className={`p-4 rounded-lg cursor-pointer transition-colors ${
+                  selectedSong?.id === song.id
+                    ? "bg-blue-100"
+                    : "bg-gray-50 hover:bg-gray-100"
+                }`}
+                onClick={() => handleSongSelect(song)}
+              >
+                <div className="font-medium">{song.title}</div>
+                <div className="text-sm text-gray-600">{song.artist}</div>
+                {selectedSong?.id === song.id && (
+                  <div className="text-sm text-blue-600 mt-1">
+                    Progress: {currentProgress.toFixed(1)}%
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="pt-14 pb-16">
-        <div className="max-w-lg mx-auto px-4">{children}</div>
-      </main>
-
-      {/* Bottom Navigation */}
-      {/* <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-4">
-        <NavButton icon="home" label="ホーム" />
-        <NavButton icon="search" label="検索" />
-        <NavButton icon="profile" label="プロフィール" />
-      </nav> */}
+        {/* Player */}
+        {selectedSong && (
+          <MusicPlayer
+            url={selectedSong.url}
+            onProgressChange={handleProgressChange}
+          />
+        )}
+      </div>
     </div>
   );
-};
-
-// interface NavButtonProps {
-//   icon: "home" | "search" | "profile";
-//   label: string;
-// }
-
-// const NavButton: React.FC<NavButtonProps> = ({ icon, label }) => {
-//   const getIcon = (type: NavButtonProps["icon"]) => {
-//     switch (type) {
-//       case "home":
-//         return (
-//           <path
-//             strokeLinecap="round"
-//             strokeLinejoin="round"
-//             strokeWidth={2}
-//             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-//           />
-//         );
-//       case "search":
-//         return (
-//           <path
-//             strokeLinecap="round"
-//             strokeLinejoin="round"
-//             strokeWidth={2}
-//             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-//           />
-//         );
-//       case "profile":
-//         return (
-//           <path
-//             strokeLinecap="round"
-//             strokeLinejoin="round"
-//             strokeWidth={2}
-//             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-//           />
-//         );
-//   }
-// };
-
-// return (
-//   <button className="flex flex-col items-center" aria-label={label}>
-//     <div className="w-6 h-6 text-gray-600">
-//       <svg
-//         xmlns="http://www.w3.org/2000/svg"
-//         fill="none"
-//         viewBox="0 0 24 24"
-//         stroke="currentColor"
-//       >
-//         {getIcon(icon)}
-//       </svg>
-//     </div>
-//     <span className="text-xs mt-1">{label}</span>
-//   </button>
-// );
-// };
-
-export default MobileLayout;
+}
