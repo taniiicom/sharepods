@@ -16,6 +16,13 @@ func main() {
 
 	e.Debug = true
 	e.Use(middleware.Logger())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOriginFunc: func(origin string) (bool, error) {
+			return true, nil
+		},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowCredentials: false,
+	}))
 
 	databaseURL, ok := config.DatabaseURL()
 	if !ok {
