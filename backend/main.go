@@ -20,6 +20,7 @@ func main() {
 	}
 
 	client := db.NewClient(db.WithDatasourceURL(databaseURL))
+
 	if err := client.Prisma.Connect(); err != nil {
 		e.Logger.Error(err)
 		os.Exit(1)

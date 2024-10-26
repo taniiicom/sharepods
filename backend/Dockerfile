@@ -32,4 +32,4 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     GOARCH=${TARGETARCH} go build -o sharepods-backend -ldflags="-s -w" -trimpath ./
 
 
-CMD [ "/app/sharepods-backend" ]
+CMD [ "./entrypoint.sh" ]
