@@ -8,7 +8,7 @@ const BubbleBackground:React.FC<BubbleBackgroundProps> = ({direction}) => {
   const sectionRef = useBubbleGenerator(direction);
 
   return (
-    <div ref={sectionRef} className="bubble-background relative w-full h-full"></div>
+    <div ref={sectionRef} className="bubble-background w-full h-full z-5"></div>
   );
 };
 

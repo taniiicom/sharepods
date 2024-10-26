@@ -59,7 +59,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange }) => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4">
+    <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-10">
       <div className="hidden">
         <ReactPlayer
           ref={playerRef}
