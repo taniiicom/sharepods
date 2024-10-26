@@ -1,101 +1,90 @@
-import Image from "next/image";
+// types/layout.ts
+export interface LayoutProps {
+  children: React.ReactNode;
+}
 
-export default function Home() {
+// components/MobileLayout.tsx
+import React from "react";
+// import { LayoutProps } from "../types/layout";
+
+const MobileLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 flex items-center px-4 z-50">
+        <div className="flex-1">
+          <h1 className="text-lg font-semibold">SharePods</h1>
         </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="pt-14 pb-16">
+        <div className="max-w-lg mx-auto px-4">{children}</div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      {/* Bottom Navigation */}
+      {/* <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-4">
+        <NavButton icon="home" label="ホーム" />
+        <NavButton icon="search" label="検索" />
+        <NavButton icon="profile" label="プロフィール" />
+      </nav> */}
     </div>
   );
-}
+};
+
+// interface NavButtonProps {
+//   icon: "home" | "search" | "profile";
+//   label: string;
+// }
+
+// const NavButton: React.FC<NavButtonProps> = ({ icon, label }) => {
+//   const getIcon = (type: NavButtonProps["icon"]) => {
+//     switch (type) {
+//       case "home":
+//         return (
+//           <path
+//             strokeLinecap="round"
+//             strokeLinejoin="round"
+//             strokeWidth={2}
+//             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+//           />
+//         );
+//       case "search":
+//         return (
+//           <path
+//             strokeLinecap="round"
+//             strokeLinejoin="round"
+//             strokeWidth={2}
+//             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+//           />
+//         );
+//       case "profile":
+//         return (
+//           <path
+//             strokeLinecap="round"
+//             strokeLinejoin="round"
+//             strokeWidth={2}
+//             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+//           />
+//         );
+//   }
+// };
+
+// return (
+//   <button className="flex flex-col items-center" aria-label={label}>
+//     <div className="w-6 h-6 text-gray-600">
+//       <svg
+//         xmlns="http://www.w3.org/2000/svg"
+//         fill="none"
+//         viewBox="0 0 24 24"
+//         stroke="currentColor"
+//       >
+//         {getIcon(icon)}
+//       </svg>
+//     </div>
+//     <span className="text-xs mt-1">{label}</span>
+//   </button>
+// );
+// };
+
+export default MobileLayout;
