@@ -13,7 +13,7 @@ const Wave: React.FC<WaveProps> = ({ direction, onAnimationEnd, isActive }) => {
 
   return (
     <div
-      className={`absolute bottom-[-200%] left-[-50%] w-[200%] h-[200%] rounded-wave bg-wave-gradient ${waveAnimationClass}`}
+      className={`absolute bottom-[-200%] left-[-50%] w-[250%] h-[200%] rounded-wave bg-wave-gradient ${waveAnimationClass}`}
       onAnimationEnd={onAnimationEnd}
     ></div>
   );
