@@ -5,12 +5,17 @@ import (
 	"os"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/taniiicom/sharepods/backend/config"
-	"github.com/taniiicom/sharepods/backend/db/schema/db"
+	"github.com/taniiicom/sharepods/backend/handler"
+	db "github.com/taniiicom/sharepods/backend/infrastructure/datamodel/dbmodel"
 )
 
 func main() {
 	e := echo.New()
+
+	e.Debug = true
+	e.Use(middleware.Logger())
 
 	databaseURL, ok := config.DatabaseURL()
 	if !ok {
@@ -35,5 +40,11 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
+
+	handler := handler.NewHandler(client)
+
+	e.GET("/watchparty", handler.GetWatchParty)
+	e.POST("/watchparty", handler.CreateOrUpdateWatchParty)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
