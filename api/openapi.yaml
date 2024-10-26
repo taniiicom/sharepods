@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: My REST API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /watchparty:
+    get:
+      summary: watchparty を geo (現在位置) から取得
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lon
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Watchparty"
+        "404":
+          description: Not Found
+    post:
+      summary: watchparty を作成/更新
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWatchpartyRequest"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+
+components:
+  schemas:
+    Watchparty:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        play_time:
+          type: number
+          description: (seconds)
+        lat:
+          type: number
+        lon:
+          type: number
+      required:
+        - id
+        - url
+        - play_time
+        - lat
+        - lon
+    CreateWatchpartyRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        current_time:
+          type: number
+          description: (seconds)
+        lat:
+          type: number
+        lon:
+          type: number
+      required:
+        - id
+        - url
+        - play_time
+        - lat
+        - lon
