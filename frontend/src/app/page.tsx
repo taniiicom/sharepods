@@ -1,9 +1,9 @@
 // app/page.tsx
 "use client";
 
+import WaveAnimation from "@/components/WaveAnimation";
 import { useState } from "react";
 import MusicPlayer from "./../components/playMovie";
-import WaveAnimation from "@/components/WaveAnimation";
 
 interface Song {
   id: string;
@@ -55,7 +55,7 @@ export default function MusicPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Music Player</h1>
+        <h1 className="text-3xl font-bold mb-6">Share Pods</h1>
 
         {/* Song List */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-20">
