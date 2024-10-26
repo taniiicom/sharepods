@@ -22,7 +22,11 @@ const useNFCListener = ({ latitude, longitude }: GeographicalLocation) => {
       const nfcReader = new window.NDEFReader();
       await nfcReader.scan();
       nfcReader.onreadingerror = async () => {
-        const res = await fetch(`?lat=${latitude}&lon=${longitude}`);
+        console.log(latitude);
+        console.log(longitude);
+        const res = await fetch(
+          `https://api.sharepods.p1ass.com/watchparty?lat=${latitude}&lon=${longitude}`,
+        );
         const watchParty: WatchParty = await res.json();
         setWatchParty(watchParty);
         setMessage("NFCイベント発生！！！");
