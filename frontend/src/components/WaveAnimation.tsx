@@ -4,12 +4,14 @@ import Wave from './Wave';
 
 const WaveAnimation = () => {
   const [isBubbleActive, setIsBubbleActive] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isWaveAnimationActive, setIsWaveAnimationActive] = useState(false);
 
   const handleAnimationEnd = () => {
     setIsBubbleActive(true);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [direction, setDirection] = useState<'up' | 'down'>('up');
 
   return (
