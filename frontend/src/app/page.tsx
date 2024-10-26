@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import MusicPlayer from "./../components/playMovie";
+import WaveAnimation from "@/components/WaveAnimation";
 
 interface Song {
   id: string;
@@ -49,6 +50,8 @@ export default function MusicPage() {
     }
   };
 
+  // types/layout.ts
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
@@ -79,7 +82,8 @@ export default function MusicPage() {
             ))}
           </div>
         </div>
-
+        {/* Main Content */}
+        <WaveAnimation />
         {/* Player */}
         {selectedSong && (
           <MusicPlayer

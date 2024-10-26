@@ -7,8 +7,26 @@ services:
     environment:
       FOO: bar
     ports:
-      - '127.0.0.1:8080:8080'
+      - "127.0.0.1:8080:8080"
     networks:
       - sharepods-network
+
+  postgres:
+    image: postgres:latest
+    container_name: sharepods-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    networks:
+      - sharepods-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
 networks:
   sharepods-network:
+
+volumes:
+  postgres-data:

@@ -1,0 +1,20 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+model WatchParty {
+  id          String   @id @default(uuid()) @map("id") // uuid
+  latitude    Float    @map("latitude")                // 緯度
+  longitude   Float    @map("longitude")               // 経度
+  url         String   @map("url")                     // 音楽/動画のリンク
+  playTime    Int      @map("play_time")               // 再生位置 (seconds)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt      @map("updated_at")
+
+  @@map("watch_parties")
+}
