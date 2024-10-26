@@ -18,6 +18,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOriginFunc: func(origin string) (bool, error) {
+			// 本来ならちゃんとoriginを見るべきだが、ハッカソンなので必ずtrueを返すようにする
 			return true, nil
 		},
 		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
