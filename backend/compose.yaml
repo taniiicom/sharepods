@@ -1,0 +1,14 @@
+services:
+  sharepods-backend:
+    container_name: sharepods-backend
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    environment:
+      FOO: bar
+    ports:
+      - '127.0.0.1:8080:8080'
+    networks:
+      - sharepods-network
+networks:
+  sharepods-network:
