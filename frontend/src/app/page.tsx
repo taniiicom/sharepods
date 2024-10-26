@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import useNFCListener from "@/hooks/useNFCListener";
 // types/layout.ts
 // export interface LayoutProps {
 //   children: React.ReactNode;
@@ -11,7 +12,7 @@ import React from "react";
 const MobileLayout = () => {
   // const nfcState = useNFCListener();
   // console.log(nfcState);
-  React.useEffect(() => {
+  const listenNFC = () => {
     if (typeof window !== "undefined" && "NDEFReader" in window) {
       const ndef = new window.NDEFReader();
       ndef
@@ -30,23 +31,35 @@ const MobileLayout = () => {
           throw new Error(error);
         });
     }
-  }, []);
+  };
+  const { nfcSupported, message, handleNfcScan } = useNFCListener();
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 flex items-center px-4 z-50">
-        <div className="flex-1">
-          <h1 className="text-lg font-semibold">SharePods</h1>
-        </div>
-      </header>
+    <>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 flex items-center px-4 z-50">
+          <div className="flex-1">
+            <h1 className="text-lg font-semibold">SharePods</h1>
+          </div>
+        </header>
 
-      {/* Bottom Navigation */}
-      {/* <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-4">
+        {/* Bottom Navigation */}
+        {/* <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-4">
         <NavButton icon="home" label="ホーム" />
         <NavButton icon="search" label="検索" />
         <NavButton icon="profile" label="プロフィール" />
       </nav> */}
-    </div>
+      </div>
+      <button onClick={listenNFC}>NFCスキャン開始1</button>
+      <div>
+        {nfcSupported ? (
+          <button onClick={handleNfcScan}>NFCスキャン開始2</button>
+        ) : (
+          <p>NFCがサポートされていません。</p>
+        )}
+        <p>{message}</p>
+      </div>
+    </>
   );
 };
 
