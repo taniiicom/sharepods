@@ -8,10 +8,34 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      keyframes: {
+        'wave-anime': {
+          'from': { transform: 'translateY(0) rotate(0deg)' },
+          'to': { transform: 'translateY(-50%) rotate(360deg)' },
+        },
+        // 'wave-move': {
+        //   'from': { transform: 'translateY(0%) rotate(0deg)' },
+        //   'to': { transform: 'translateY(-50%) rotate(360deg)' },
+        // },
       },
+      animation: {
+        'wave-anime': 'wave-anime 8s linear forwards',
+        'wave-move': 'wave-move 8s forwards linear',
+      },
+      boxShadow: {
+        'custom': '0 4px 20px rgba(0, 0, 0, 0.2)',
+      },
+      backgroundImage: {
+        'wave-gradient': 'linear-gradient(80deg, #0093E9 0%, #80D0C7 50%, #fff 100%)',
+      },
+      borderRadius: {
+        'wave': '30% 30% / 50% 50%',
+      },
+    },
+  },
+  variants: {
+    extend: {
+      animation: ['hover'],
     },
   },
   plugins: [],
