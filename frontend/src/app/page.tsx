@@ -1,13 +1,36 @@
+"use client";
+import React from "react";
 // types/layout.ts
-export interface LayoutProps {
-  children: React.ReactNode;
-}
+// export interface LayoutProps {
+//   children: React.ReactNode;
+// }
 
 // components/MobileLayout.tsx
-import React from "react";
 // import { LayoutProps } from "../types/layout";
 
-const MobileLayout: React.FC<LayoutProps> = ({ children }) => {
+const MobileLayout = () => {
+  // const nfcState = useNFCListener();
+  // console.log(nfcState);
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && "NDEFReader" in window) {
+      const ndef = new window.NDEFReader();
+      ndef
+        .scan()
+        .then(() => {
+          ndef.onreading = (event) => {
+            const decoder = new TextDecoder();
+            const message = event.message;
+            const records = message.records.map((record) =>
+              decoder.decode(record.data),
+            );
+            console.log(records.join(", "));
+          };
+        })
+        .catch((error) => {
+          throw new Error(error);
+        });
+    }
+  }, []);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -16,11 +39,6 @@ const MobileLayout: React.FC<LayoutProps> = ({ children }) => {
           <h1 className="text-lg font-semibold">SharePods</h1>
         </div>
       </header>
-
-      {/* Main Content */}
-      <main className="pt-14 pb-16">
-        <div className="max-w-lg mx-auto px-4">{children}</div>
-      </main>
 
       {/* Bottom Navigation */}
       {/* <nav className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-4">
