@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "log/slog"
 
+func main() {
+	slog.Info("Hello World")
 }
