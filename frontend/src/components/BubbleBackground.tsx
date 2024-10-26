@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-const BubbleBackground = () => {
+interface BubbleBackgroundProps {
+  direction: 'up' | 'down';
+}
+
+const BubbleBackground:React.FC<BubbleBackgroundProps> = ({direction}) => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -10,7 +14,7 @@ const BubbleBackground = () => {
 
     const createBubble = () => {
       const bubbleEl = document.createElement('span');
-      bubbleEl.className = 'bubble';
+      bubbleEl.className = direction === 'up' ? 'bubble-up' : 'bubble-down';
       const minSize = 10;
       const maxSize = 50;
       const size = Math.random() * (maxSize - minSize) + minSize;
@@ -25,13 +29,15 @@ const BubbleBackground = () => {
     };
 
     // 泡の生成を開始
-    activeBubble = setInterval(createBubble, 300);
+    activeBubble = setInterval(() => {
+      createBubble();
+    }, 300);
 
     // クリーンアップ関数
     return () => {
       clearInterval(activeBubble);
     };
-  }, []);
+  }, [direction]);
 
   return (
     <div ref={sectionRef} className="bubble-background relative w-full h-full"></div>
