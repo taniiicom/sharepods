@@ -53,22 +53,20 @@ export default function MusicPage() {
   // types/layout.ts
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Share Pods</h1>
+    <WaveAnimation>
+        <h1 className="text-3xl font-bold mb-6 z-10 relative">Share Pods</h1>
 
         {/* Song List */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-20">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-20 z-10 relative">
           <h2 className="text-xl font-semibold mb-4">Songs</h2>
           <div className="space-y-4">
             {songs.map((song) => (
               <div
                 key={song.id}
-                className={`p-4 rounded-lg cursor-pointer transition-colors ${
-                  selectedSong?.id === song.id
-                    ? "bg-blue-100"
-                    : "bg-gray-50 hover:bg-gray-100"
-                }`}
+                className={`p-4 rounded-lg cursor-pointer transition-colors ${selectedSong?.id === song.id
+                  ? "bg-blue-100"
+                  : "bg-gray-50 hover:bg-gray-100"
+                  }`}
                 onClick={() => handleSongSelect(song)}
               >
                 <div className="font-medium">{song.title}</div>
@@ -82,8 +80,6 @@ export default function MusicPage() {
             ))}
           </div>
         </div>
-        {/* Main Content */}
-        <WaveAnimation />
         {/* Player */}
         {selectedSong && (
           <MusicPlayer
@@ -91,7 +87,6 @@ export default function MusicPage() {
             onProgressChange={handleProgressChange}
           />
         )}
-      </div>
-    </div>
+    </WaveAnimation>
   );
 }
