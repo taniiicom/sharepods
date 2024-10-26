@@ -6,7 +6,7 @@
 // This type definitions referenced to WebIDL.
 // https://w3c.github.io/web-nfc/#actual-idl-index
 
-export {}; // モジュールスコープとして扱わせるために追加
+export { }; // モジュールスコープとして扱わせるために追加
 
 declare global {
   interface Window {
@@ -48,9 +48,12 @@ declare interface NDEFRecordInit {
 
 declare type NDEFMessageSource = string | BufferSource | NDEFMessageInit;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare class NDEFReader extends EventTarget {
   constructor();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onreading: (this: this, event: NDEFReadingEvent) => any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onreadingerror: (this: this, error: Event) => any;
   scan: (options?: NDEFScanOptions) => Promise<void>;
   write: (
