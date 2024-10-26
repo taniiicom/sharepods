@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - develop
-      - push-docker-image-to-docker-hub # デバッグ用に追加
+      - main
 
 jobs:
   push_to_registry:
