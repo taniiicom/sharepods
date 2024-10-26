@@ -1,13 +1,10 @@
 // types/layout.ts
 "use client";
 import WaveAnimation from "@/components/WaveAnimation";
-export interface LayoutProps {
-  children: React.ReactNode;
-}
 
 import React from "react";
 
-const MobileLayout: React.FC<LayoutProps> = ({ }) => {
+const MobileLayout: React.FC = ({ }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
