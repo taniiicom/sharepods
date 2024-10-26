@@ -4,16 +4,17 @@ import Wave from './Wave';
 
 const WaveAnimation = () => {
   const [isBubbleActive, setIsBubbleActive] = useState(false);
+  const [isWaveAnimationActive, setIsWaveAnimationActive] = useState(false);
 
   const handleAnimationEnd = () => {
     setIsBubbleActive(true);
   };
 
-  const [direction, setDirection] = useState<'up' | 'down'>('down');
+  const [direction, setDirection] = useState<'up' | 'down'>('up');
 
   return (
     <div className="relative overflow-hidden mx-auto w-full h-screen bg-white/10 shadow-custom">
-      <Wave direction={direction} onAnimationEnd={handleAnimationEnd} />
+      <Wave direction={direction} onAnimationEnd={handleAnimationEnd} isActive={isWaveAnimationActive}/>
       {isBubbleActive && <BubbleBackground direction={direction} />}
     </div>
   );
