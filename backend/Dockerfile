@@ -18,6 +18,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
      GOARCH=${TARGETARCH} go mod download
 
 COPY . ./
+
+# Prisma Clientを生成
+RUN go run github.com/steebchen/prisma-client-go generate --schema db/schema/schema.prisma
+
 # ビルドから不要な情報を取り除く
 # https://qiita.com/ssc-ynakamura/items/da37856f7f217d708a07
 RUN --mount=type=cache,target=/go/pkg/mod \
