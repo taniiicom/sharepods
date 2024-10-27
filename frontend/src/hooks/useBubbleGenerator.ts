@@ -18,7 +18,11 @@ export const useBubbleGenerator = (direction: 'up' | 'down') => {
       const size = Math.random() * (maxSize - minSize) + minSize;
       bubbleEl.style.width = `${size}px`;
       bubbleEl.style.height = `${size}px`;
-      bubbleEl.style.left = `${Math.random() * window.innerWidth}px`;
+      if (direction === 'up') {
+        bubbleEl.style.left = `${Math.random() * window.innerWidth}px`;
+      } else {
+        bubbleEl.style.right = `${Math.random() * window.innerWidth}px`;
+      }
 
       section.appendChild(bubbleEl);
 

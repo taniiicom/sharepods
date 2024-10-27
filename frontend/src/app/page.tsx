@@ -3,16 +3,15 @@
 
 import WaveAnimation from "@/components/WaveAnimation";
 import { useDirection } from "@/hooks/useDirection";
-// import { useDuration } from "@/hooks/useDuration";
 import useGeolocation from "@/hooks/useGeolocation";
 import useNFCListener from "@/hooks/useNFCListener";
 // import { usePlayed } from "@/hooks/usePlayed";
 // import { usePlaying } from "@/hooks/usePlaying";
+import { usePlaying } from "@/hooks/usePlaying";
 import { useWaveAnimationActive } from "@/hooks/useWaveAnimationActive";
 import WatchParty from "@/types/WatchParty";
 import { ChangeEvent, useId, useState } from "react";
 import MusicPlayer from "./../components/playMovie";
-import { usePlaying } from "@/hooks/usePlaying";
 
 export default function MusicPage() {
   const { coordinates } = useGeolocation();
@@ -20,22 +19,22 @@ export default function MusicPage() {
   const latitude = coordinates?.[0] ?? 0;
   const longitude = coordinates?.[1] ?? 0;
   const id = useId();
+  const { direction, setDirection } = useDirection("down");
   const onFetch = async (watchParty: WatchParty) => {
     watchParty.play_time += 1.2;
     setWatchParty(watchParty);
     setIsPlaying(true);
+    setIsWaveAnimationActive(true);
     setStatus("reciever");
+    setDirection("down");
   }
-  
+
   const { nfcSupported, watchParty, handleNfcScan, setWatchParty } =
     useNFCListener({
       latitude: latitude,
       longitude: longitude,
       onFetch: onFetch,
     });
-
-
-
   const handleSongSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setWatchParty({
@@ -48,11 +47,10 @@ export default function MusicPage() {
     console.log(watchParty);
     setStatus("sender");
   };
-  const { direction, setDirection } = useDirection("down");
   const { isWaveAnimationActive, setIsWaveAnimationActive } =
     useWaveAnimationActive(false);
   const { isPlaying, setIsPlaying } = usePlaying();
-  // const { duration, setDuration } = useDuration();
+
   // const { played, setPlayed } = usePlayed();
 
   const handleDebugNFC = async () => {
@@ -66,6 +64,8 @@ export default function MusicPage() {
     // setPlayed(watchParty.play_time % duration);
     // setIsPlaying(true);
     setStatus("reciever");
+    setIsWaveAnimationActive(true);
+    setDirection("down");
   };
 
   const handleProgressChange = async (progress: number) => {
