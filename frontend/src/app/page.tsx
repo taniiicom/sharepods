@@ -20,12 +20,21 @@ export default function MusicPage() {
   const latitude = coordinates?.[0] ?? 0;
   const longitude = coordinates?.[1] ?? 0;
   const id = useId();
-
+  const onFetch = async (watchParty: WatchParty) => {
+    watchParty.play_time += 1.2;
+    setWatchParty(watchParty);
+    setIsPlaying(true);
+    setStatus("reciever");
+  }
+  
   const { nfcSupported, watchParty, handleNfcScan, setWatchParty } =
     useNFCListener({
       latitude: latitude,
       longitude: longitude,
+      onFetch: onFetch,
     });
+
+
 
   const handleSongSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
@@ -112,7 +121,9 @@ export default function MusicPage() {
           </div>
         </div>
         {nfcSupported ? (
-          <button onClick={handleNfcScan}>NFCスキャン開始</button>
+          <button onClick={() => {
+            handleNfcScan();
+          }}>NFCスキャン開始</button>
         ) : (
           <>
             <p>NFCに対応していません</p>
