@@ -23,7 +23,8 @@ export default function MusicPage() {
       longitude: longitude,
     });
 
-  const { wsCurrentSeekTime, callWebSocket, sendWsMessage } = useWebSocket();
+  const { isSharing, wsCurrentSeekTime, callWebSocket, sendWsMessage } =
+    useWebSocket();
   useEffect(() => {
     callWebSocket({ id });
   }, [id, callWebSocket]);
@@ -42,6 +43,12 @@ export default function MusicPage() {
   const { direction, setDirection } = useDirection("down");
   const { isWaveAnimationActive, setIsWaveAnimationActive } =
     useWaveAnimationActive(false);
+  useEffect(() => {
+    console.log(`isSharing: ${isSharing}`);
+    if (isSharing) {
+      setIsWaveAnimationActive(true);
+    }
+  }, [isSharing, setIsWaveAnimationActive]);
 
   const handleDebugNFC = async () => {
     const res = await fetch(
@@ -68,7 +75,7 @@ export default function MusicPage() {
         sendWsMessage({
           play_time: progress,
         });
-        setIsWaveAnimationActive(true);
+        // setIsWaveAnimationActive(true);
         setDirection("up");
       } catch (error) {
         console.error("Failed to save progress:", error);
