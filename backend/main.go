@@ -9,6 +9,7 @@ import (
 	"github.com/taniiicom/sharepods/backend/config"
 	"github.com/taniiicom/sharepods/backend/handler"
 	db "github.com/taniiicom/sharepods/backend/infrastructure/datamodel/dbmodel"
+	"github.com/taniiicom/sharepods/backend/realtime"
 )
 
 func main() {
@@ -45,14 +46,21 @@ func main() {
 		}
 	}()
 
+	wsManager := realtime.NewWebSocketManager()
+	go wsManager.Run()
+
+	handler := handler.NewHandler(client, wsManager)
+
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	handler := handler.NewHandler(client)
-
 	e.GET("/watchparty", handler.GetWatchParty)
 	e.POST("/watchparty", handler.CreateOrUpdateWatchParty)
+
+	e.GET("/ws", func(c echo.Context) error {
+		return realtime.HandleWebSocketConnection(c, wsManager)
+	})
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

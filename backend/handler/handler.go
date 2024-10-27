@@ -9,16 +9,18 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/taniiicom/sharepods/backend/infrastructure/datamodel/apimodel"
 	db "github.com/taniiicom/sharepods/backend/infrastructure/datamodel/dbmodel"
+	"github.com/taniiicom/sharepods/backend/realtime"
 )
 
 const tolerance = 0.00045 // 約50mの誤差
 
 type handler struct {
-	db *db.PrismaClient
+	db        *db.PrismaClient
+	wsManager *realtime.WebSocketManager
 }
 
-func NewHandler(db *db.PrismaClient) *handler {
-	return &handler{db: db}
+func NewHandler(db *db.PrismaClient, wsManager *realtime.WebSocketManager) *handler {
+	return &handler{db: db, wsManager: wsManager}
 }
 
 // GetWatchParty - 緯度・経度の範囲内のレコードを取得
@@ -47,18 +49,13 @@ func (h *handler) GetWatchParty(c echo.Context) error {
 	}
 
 	watchParty, err := h.FindWatchPartyInRange(lat, lon, tolerance)
-	if err != nil {
+	if err != nil || watchParty == nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
-			"message": "There is no watch party",
+			"message": "No watch party found",
 		})
 	}
 
-	if watchParty == nil {
-		return c.JSON(http.StatusNotFound, echo.Map{
-			"message": "No watch party found within the tolerance range",
-		})
-	}
-
+	// WatchPartyオブジェクトを返す
 	return c.JSON(http.StatusOK, watchParty)
 }
 
@@ -78,6 +75,7 @@ func (h *handler) CreateOrUpdateWatchParty(c echo.Context) error {
 		})
 	}
 
+	// WatchPartyオブジェクトを返す
 	return c.JSON(http.StatusOK, watchParty)
 }
 
