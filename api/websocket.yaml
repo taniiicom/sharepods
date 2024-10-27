@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: WebSocket API
+  description: WebSocket 接続を介して WatchParty グループに参加する API
+  version: 1.0.0
+
+paths:
+  /ws:
+    get:
+      summary: WebSocket 接続を確立
+      description: |
+        `/ws` エンドポイントは WebSocket 接続を確立するために使用されます。  
+        クエリパラメータでグループ ID (`group`) を指定して, 特定の WatchParty グループに参加します。
+      parameters:
+        - in: query
+          name: group
+          required: true
+          schema:
+            type: string
+          description: 参加する WatchParty の UUID で一意に識別されるグループ ID
+      responses:
+        "101":
+          description: WebSocket プロトコル切り替えの成功
+        "400":
+          description: グループ ID が指定されていない場合
+        "500":
+          description: サーバーエラー
+
+components:
+  schemas:
+    WebSocketMessage:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'メッセージの種類 (例: "message", "notification", など)'
+        content:
+          type: string
+          description: メッセージの内容
+        sender:
+          type: string
+          description: メッセージの送信者の識別子
+
+tags:
+  - name: WebSocket
+    description: WebSocket 接続に関連するエンドポイント

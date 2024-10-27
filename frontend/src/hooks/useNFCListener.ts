@@ -1,8 +1,9 @@
+"use client";
 import GeographicalLocation from "@/types/GeographicalLocation";
 import WatchParty from "@/types/WatchParty";
 import { useEffect, useState } from "react";
 
-const useNFCListener = ({ latitude, longitude }: GeographicalLocation) => {
+const useNFCListener = ({ latitude, longitude, onFetch }: GeographicalLocation) => {
   const [nfcSupported, setNfcSupported] = useState(false);
   const [watchParty, setWatchParty] = useState<WatchParty | null>(null);
   const [message, setMessage] = useState("");
@@ -28,6 +29,7 @@ const useNFCListener = ({ latitude, longitude }: GeographicalLocation) => {
         const watchParty: WatchParty = await res.json();
         setWatchParty(watchParty);
         setMessage("NFCイベント発生！！！");
+        onFetch(watchParty);
       };
       setMessage("NFCスキャンを開始しました。カードをかざしてください。");
     } catch (error) {
