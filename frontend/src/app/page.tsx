@@ -23,8 +23,13 @@ export default function MusicPage() {
       longitude: longitude,
     });
 
-  const { isSharing, wsCurrentSeekTime, callWebSocket, sendWsMessage } =
-    useWebSocket();
+  const {
+    wsIsPlaying,
+    isSharing,
+    wsCurrentSeekTime,
+    callWebSocket,
+    sendWsMessage,
+  } = useWebSocket();
   useEffect(() => {
     callWebSocket({ id });
   }, [id, callWebSocket]);
@@ -134,6 +139,8 @@ export default function MusicPage() {
           url={watchParty.url}
           onProgressChange={handleProgressChange}
           wsCurrentSeekTime={wsCurrentSeekTime}
+          wsIsPlaying={wsIsPlaying}
+          sendWsMessage={sendWsMessage}
         />
       )}
     </WaveAnimation>

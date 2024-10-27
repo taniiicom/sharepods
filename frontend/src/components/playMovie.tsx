@@ -6,12 +6,16 @@ interface MusicPlayerProps {
   url: string; // 再生する音楽/動画のURL
   onProgressChange?: (progress: number) => void; // 進捗変更時のコールバック（0-100の値）
   wsCurrentSeekTime: number;
+  wsIsPlaying: boolean;
+  sendWsMessage: (message: { isPlay?: boolean }) => void;
 }
 
 const MusicPlayer: React.FC<MusicPlayerProps> = ({
   url,
   onProgressChange,
   wsCurrentSeekTime,
+  wsIsPlaying,
+  sendWsMessage,
 }) => {
   // ReactPlayerのインスタンスを参照するためのref
   const playerRef = useRef<ReactPlayer | null>(null);
@@ -34,6 +38,13 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
     handleSeek(wsCurrentSeekTime);
     setPlayed(wsCurrentSeekTime / duration);
   }, [wsCurrentSeekTime, duration]);
+  useEffect(() => {
+    if (wsIsPlaying) {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+    }
+  }, [wsIsPlaying]);
 
   // 再生状態が変化したかどうかをチェックする関数
   const hasStateChanged = (currentPlayed: number) => {
@@ -58,6 +69,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
   // 再生/一時停止ボタンのクリックハンドラ
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
+    sendWsMessage({ isPlay: !isPlaying });
   };
 
   // 再生進捗の更新ハンドラ（ReactPlayerから定期的に呼び出される）
