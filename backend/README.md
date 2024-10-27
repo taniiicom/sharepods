@@ -14,6 +14,6 @@ $ go run github.com/steebchen/prisma-client-go db push --schema db/schema/schema
 ```
 
 ```shell
-$ curl localhost:8080
+$ curl "http://localhost:8080/watchparty?lat=1&lon=1"
 Hello, World!
 ```
