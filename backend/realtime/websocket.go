@@ -1,6 +1,7 @@
 package realtime
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -24,6 +25,11 @@ type message struct {
 	data    []byte
 }
 
+type numPeopleMessage struct {
+	Type      string `json:"type"`
+	NumPeople int    `json:"num_people"`
+}
+
 func NewWebSocketManager() *WebSocketManager {
 	return &WebSocketManager{
 		clients:    make(map[string]map[*websocket.Conn]bool),
@@ -42,11 +48,17 @@ func (m *WebSocketManager) Run() {
 			}
 			m.clients[sub.groupID][sub.conn] = true
 
+			// クライアント数を通知
+			m.notifyNumPeople(sub.groupID)
+
 		case sub := <-m.unregister:
 			if clients, ok := m.clients[sub.groupID]; ok {
 				if _, exists := clients[sub.conn]; exists {
 					delete(clients, sub.conn)
 					sub.conn.Close()
+
+					// クライアント数を通知
+					m.notifyNumPeople(sub.groupID)
 				}
 			}
 
@@ -56,6 +68,9 @@ func (m *WebSocketManager) Run() {
 					if err := conn.WriteMessage(websocket.TextMessage, msg.data); err != nil {
 						conn.Close()
 						delete(clients, conn)
+
+						// クライアント数を通知
+						m.notifyNumPeople(msg.groupID)
 					}
 				}
 			}
@@ -82,6 +97,29 @@ func (m *WebSocketManager) listenForMessages(groupID string, conn *websocket.Con
 
 		// 受信したメッセージを同じグループ内の全クライアントにブロードキャスト
 		m.broadcast <- message{groupID: groupID, data: data}
+	}
+}
+
+func (m *WebSocketManager) notifyNumPeople(groupID string) {
+	if clients, ok := m.clients[groupID]; ok {
+		numPeople := len(clients)
+		msg := numPeopleMessage{
+			Type:      "numPeople",
+			NumPeople: numPeople,
+		}
+
+		data, err := json.Marshal(msg)
+		if err != nil {
+			return
+		}
+
+		// 現在のクライアント数をグループ内の全クライアントに通知
+		for conn := range clients {
+			if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
+				conn.Close()
+				delete(clients, conn)
+			}
+		}
 	}
 }
 
