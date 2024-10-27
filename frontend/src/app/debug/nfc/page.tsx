@@ -2,7 +2,7 @@
 import useNFCListener from "@/hooks/useNFCListener";
 
 export default function DebugNFCPage() {
-  const { nfcSupported, watchParty, handleNfcScan, setWatchParty } = useNFCListener({
+  const { nfcSupported, watchParty, handleNfcScan } = useNFCListener({
     latitude: 1000, // テスト用数値
     longitude: 1000, // テスト用数値
   });
