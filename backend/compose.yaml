@@ -5,7 +5,7 @@ services:
       dockerfile: ./Dockerfile
       context: .
     environment:
-      FOO: bar
+      DATABASE_URL: "postgresql://user:password@postgres:5432/mydb?schema=public"
     ports:
       - "127.0.0.1:8080:8080"
     networks:

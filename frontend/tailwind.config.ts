@@ -11,19 +11,19 @@ const config: Config = {
       keyframes: {
         'wave-up': {
           '0%': {
-            transform: 'translateY(0) translateX(0%) scaleX(1) rotate(0deg)',
+            transform: 'translateY(0) translateX(0%) scaleX(1) rotate(-40deg)',
           },
           '25%': {
-            transform: 'translateY(-12.5%) translateX(-5%) scaleX(1.05) rotate( 90deg)',
+            transform: 'translateY(-12.5%) translateX(-5%) scaleX(1.05) rotate(0deg)',
           },
           '50%': {
-            transform: 'translateY(-25%) translateX(0%) scaleX(1) rotate(180deg)',
+            transform: 'translateY(-25%) translateX(0%) scaleX(1) rotate(30deg)',
           },
           '75%': {
-            transform: 'translateY(-37.5%) translateX(5%) scaleX(0.95) rotate(270deg)',
+            transform: 'translateY(-37.5%) translateX(5%) scaleX(0.95) rotate(60deg)',
           },
           '100%': {
-            transform: 'translateY(-50%) translateX(0%) scaleX(1) rotate(360deg)',
+            transform: 'translateY(-50%) translateX(0%) scaleX(1) rotate(120deg)',
           },
         },
         'wave-down': {
@@ -40,7 +40,7 @@ const config: Config = {
             transform: 'translateY(-75%) translateX(-5%) scaleX(1.05) rotate(270deg)',
           },
           '100%': {
-            transform: 'translateY(-50%) translateX(0%) scaleX(1) rotate(360deg)',
+            transform: 'translateY(-50%) translateX(0%) scaleX(1) rotate(300deg)',
           },
         },
       },
@@ -56,7 +56,7 @@ const config: Config = {
           'linear-gradient(80deg, #0093E9 0%, #80D0C7 50%, #fff 100%)',
       },
       borderRadius: {
-        'wave': '40% 35% 30% 35% / 30% 40% 35% 40%',
+        'wave': '40% 45% 30% 35% / 30% 45% 50% 40%',
       },
     },
   },

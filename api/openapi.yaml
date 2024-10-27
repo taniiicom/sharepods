@@ -4,6 +4,7 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080
+  - url: https://api.sharepods.p1ass.com
 paths:
   /watchparty:
     get:
@@ -81,6 +82,6 @@ components:
       required:
         - id
         - url
-        - play_time
+        - current_time
         - lat
         - lon
