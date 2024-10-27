@@ -34,7 +34,19 @@ const useWebSocket = () => {
     };
   };
 
-  return { wsCurrentSeekTime, wsIsPlaying, isSharing, callWebSocket };
+  const sendWsMessage = (message: WsMessage) => {
+    if (ws.current?.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify(message));
+    }
+  };
+
+  return {
+    wsCurrentSeekTime,
+    wsIsPlaying,
+    isSharing,
+    callWebSocket,
+    sendWsMessage,
+  };
 };
 
 export default useWebSocket;
