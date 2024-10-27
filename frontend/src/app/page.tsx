@@ -2,6 +2,7 @@
 "use client";
 
 import WaveAnimation from "@/components/WaveAnimation";
+import useNFCListener from "@/hooks/useNFCListener";
 import { useState } from "react";
 import MusicPlayer from "./../components/playMovie";
 
@@ -30,12 +31,13 @@ export default function MusicPage() {
   const handleProgressChange = async (progress: number) => {
     // setCurrentProgress(progress);
 
-    if (selectedSong) {
+    if (watchParty) {
       try {
         await fetch("/api/progress", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            songId: watchParty.id,
             progress,
           }),
         });
@@ -44,6 +46,11 @@ export default function MusicPage() {
       }
     }
   };
+
+  const { nfcSupported, watchParty, handleNfcScan } = useNFCListener({
+    latitude: 35.0,
+    longitude: 139.0,
+  });
 
   // types/layout.ts
 
@@ -69,11 +76,14 @@ export default function MusicPage() {
           </div>
         </div>
         {/* Player */}
-        {selectedSong && (
+        {watchParty && (
           <MusicPlayer
-            url={selectedSong.url}
+            url={watchParty.url}
             onProgressChange={handleProgressChange}
           />
+        )}
+        {nfcSupported && (
+          <button onClick={handleNfcScan}>NFCスキャン開始</button>
         )}
     </WaveAnimation>
   );
