@@ -5,16 +5,23 @@ import ReactPlayer from "react-player";
 interface MusicPlayerProps {
   url: string; // 再生する音楽/動画のURL
   onProgressChange?: (progress: number) => void; // 進捗変更時のコールバック（0-100の値）
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+  duration: number;
+  setDuration: (duration: number) => void;
+  played: number;
+  setPlayed: (played: number) => void;
+  status: "sender" | "reciever";
 }
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange }) => {
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlaying, setIsPlaying, duration, setDuration, played, setPlayed, status }) => {
   // ReactPlayerのインスタンスを参照するためのref
   const playerRef = useRef<ReactPlayer | null>(null);
 
   // 再生状態を管理するstate
-  const [isPlaying, setIsPlaying] = useState(false); // 再生中かどうか
-  const [played, setPlayed] = useState(0); // 再生位置（0-1の値）
-  const [duration, setDuration] = useState(0); // 動画の総再生時間（秒）
+  // const [isPlaying, setIsPlaying] = useState(false); // 再生中かどうか
+  // const [played, setPlayed] = useState(0); // 再生位置（0-1の値）
+  // const [duration, setDuration] = useState(0); // 動画の総再生時間（秒）
   const [seeking, setSeeking] = useState(false); // シークバー操作中かどうか
 
   // 前回の状態を保持するためのref
@@ -57,7 +64,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange }) => {
       setPlayed(state.played);
 
       // 重要な状態変化時のみonProgressChangeを呼び出す
-      if (hasStateChanged(state.played)) {
+      if (hasStateChanged(state.played) && status === "sender") {
         onProgressChange?.(state.played * 100);
       }
     }
@@ -81,7 +88,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange }) => {
   const handleSeekMouseUp = () => {
     setSeeking(false);
     // シーク操作完了時にonProgressChangeを呼び出す
-    onProgressChange?.(played * 100);
+    if (status === "sender") {
+      onProgressChange?.(played * 100);
+    }
   };
 
   // プログラムによるシーク位置の更新ハンドラ
