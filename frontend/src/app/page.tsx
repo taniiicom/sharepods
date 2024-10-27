@@ -2,36 +2,49 @@
 "use client";
 
 import WaveAnimation from "@/components/WaveAnimation";
+import useGeolocation from "@/hooks/useGeolocation";
 import useNFCListener from "@/hooks/useNFCListener";
-import WatchParty from "@/types/WatchParty";
+import { ChangeEvent, useId } from "react";
 import MusicPlayer from "./../components/playMovie";
 
 
 export default function MusicPage() {
-
+  const { coordinates } = useGeolocation();
+  const latitude = coordinates?.[0] ?? 0;
+  const longitude = coordinates?.[1] ?? 0;
+  const id = useId();
 
   const { nfcSupported, watchParty, handleNfcScan, setWatchParty } = useNFCListener({
-    latitude: 35.0,
-    longitude: 139.0,
+    latitude: latitude,
+    longitude: longitude,
   });
 
-  const handleSongSelect = (watchParty: WatchParty) => {
-    setWatchParty(watchParty);
+  const handleSongSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setWatchParty({
+      id: id,
+      lat: latitude,
+      lon: longitude,
+      url: url,
+      play_time: 0,
+    });
+    console.log(watchParty);
   };
+
 
   const handleProgressChange = async () => {
     // setCurrentProgress(progress);
 
     if (watchParty) {
       try {
-        await fetch("/api/progress", {
+        await fetch("https://api.sharepods.p1ass.com/watchparty", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id: watchParty.id,
+            id: id,
             url: watchParty.url,
-            lat: watchParty.lat,
-            lon: watchParty.lon,
+            lat: latitude,
+            lon: longitude,
             current_time: watchParty.play_time,
           }),
         });
@@ -52,20 +65,9 @@ export default function MusicPage() {
       <div className="bg-white rounded-lg shadow-md p-6 mb-20 z-10 relative">
         <h2 className="text-xl font-semibold mb-4">Songs</h2>
         <div className="space-y-4">
-          {/* {songs.map((song) => (
-              <div
-                key={song.id}
-                className={`p-4 rounded-lg cursor-pointer transition-colors ${selectedSong?.id === song.id
-                  ? "bg-blue-100"
-                  : "bg-gray-50 hover:bg-gray-100"
-                  }`}
-                onClick={() => handleSongSelect(song)}
-              >
-              </div>
-            ))} */}
           <div>
             <label htmlFor="website" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">URL</label>
-            <input type="url" id="website" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="flowbite.com" required onChange={() => handleSongSelect}/>
+            <input type="url" id="website" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="flowbite.com" required onChange={(e) => handleSongSelect(e)}/>
           </div>
         </div>
       </div>
