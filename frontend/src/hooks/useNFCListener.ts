@@ -1,3 +1,4 @@
+"use client";
 import GeographicalLocation from "@/types/GeographicalLocation";
 import WatchParty from "@/types/WatchParty";
 import { useEffect, useState } from "react";
