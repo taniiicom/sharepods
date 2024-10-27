@@ -1,48 +1,59 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 
-// コンポーネントのプロップス型定義
 interface MusicPlayerProps {
-  url: string; // 再生する音楽/動画のURL
-  onProgressChange?: (progress: number) => void; // 進捗変更時のコールバック（0-100の値）
+  url: string;
+  onProgressChange?: (progress: number) => void;
   isPlaying: boolean;
-  setIsPlaying: (isPlaying: boolean) => void;
-  duration: number;
-  setDuration: (duration: number) => void;
-  played: number;
-  setPlayed: (played: number) => void;
-  status: "sender" | "reciever";
+  setIsPlaying: any;
+  // 現在の再生時間（秒）を制御するための新しいプロップス
+  currentTimeSeconds?: number;
 }
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlaying, setIsPlaying, duration, setDuration, played, setPlayed, status }) => {
-  // ReactPlayerのインスタンスを参照するためのref
+const MusicPlayer: React.FC<MusicPlayerProps> = ({
+  url,
+  isPlaying,
+  setIsPlaying,
+  onProgressChange,
+  currentTimeSeconds,
+}) => {
   const playerRef = useRef<ReactPlayer | null>(null);
+  //   const [isPlaying, setIsPlaying] = useState(false);
+  const [played, setPlayed] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [seeking, setSeeking] = useState(false);
 
-  // 再生状態を管理するstate
-  // const [isPlaying, setIsPlaying] = useState(false); // 再生中かどうか
-  // const [played, setPlayed] = useState(0); // 再生位置（0-1の値）
-  // const [duration, setDuration] = useState(0); // 動画の総再生時間（秒）
-  const [seeking, setSeeking] = useState(false); // シークバー操作中かどうか
+  // 前回のcurrentTimeSecondsを保持するref
+  const prevTimeRef = useRef<number | undefined>(undefined);
 
-  // 前回の状態を保持するためのref
-  // refを使用することで、値の更新時に再レンダリングが発生しない
   const prevStateRef = useRef({
     isPlaying: false,
     played: 0,
     seeking: false,
   });
 
-  // 再生状態が変化したかどうかをチェックする関数
+  // currentTimeSecondsが変更されたときに再生位置を更新
+  useEffect(() => {
+    if (
+      currentTimeSeconds !== undefined &&
+      currentTimeSeconds !== prevTimeRef.current &&
+      duration > 0 &&
+      !seeking
+    ) {
+      const newPlayed = Math.min(currentTimeSeconds / duration, 1);
+      setPlayed(newPlayed);
+      if (playerRef.current) {
+        playerRef.current.seekTo(newPlayed, "fraction");
+      }
+      prevTimeRef.current = currentTimeSeconds;
+    }
+  }, [currentTimeSeconds, duration, seeking]);
+
   const hasStateChanged = (currentPlayed: number) => {
     const prevState = prevStateRef.current;
-
-    // 再生状態の変化をチェック（再生開始/停止）
     const playStateChanged = prevState.isPlaying !== isPlaying;
-
-    // シーク操作の完了をチェック（シーク操作終了時）
     const seekingCompleted = prevState.seeking && !seeking;
 
-    // 前回の状態を更新
     prevStateRef.current = {
       isPlaying,
       played: currentPlayed,
@@ -52,48 +63,37 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlay
     return playStateChanged || seekingCompleted;
   };
 
-  // 再生/一時停止ボタンのクリックハンドラ
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
 
-  // 再生進捗の更新ハンドラ（ReactPlayerから定期的に呼び出される）
   const handleProgress = (state: { played: number; playedSeconds: number }) => {
     if (!seeking) {
-      // シーク中でない場合のみ更新
       setPlayed(state.played);
 
-      // 重要な状態変化時のみonProgressChangeを呼び出す
-      if (hasStateChanged(state.played) && status === "sender") {
+      if (hasStateChanged(state.played)) {
         onProgressChange?.(state.played * 100);
       }
     }
   };
 
-  // シークバーの値変更ハンドラ
   const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     setPlayed(value);
     if (playerRef.current) {
-      playerRef.current.seekTo(value, "fraction"); // 再生位置を更新
+      playerRef.current.seekTo(value, "fraction");
     }
   };
 
-  // シークバーのドラッグ開始ハンドラ
   const handleSeekMouseDown = () => {
     setSeeking(true);
   };
 
-  // シークバーのドラッグ終了ハンドラ
   const handleSeekMouseUp = () => {
     setSeeking(false);
-    // シーク操作完了時にonProgressChangeを呼び出す
-    if (status === "sender") {
-      onProgressChange?.(played * 100);
-    }
+    onProgressChange?.(played * 100);
   };
 
-  // プログラムによるシーク位置の更新ハンドラ
   const handleSeek = (seconds: number) => {
     setPlayed(seconds);
     if (playerRef.current) {
@@ -101,7 +101,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlay
     }
   };
 
-  // 秒数を「MM:SS」または「HH:MM:SS」形式に変換する関数
   const formatTime = (seconds: number) => {
     const date = new Date(seconds * 1000);
     const hh = date.getUTCHours();
@@ -114,9 +113,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlay
   };
 
   return (
-    // プレイヤーのコンテナ（画面下部に固定）
     <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-10">
-      {/* 非表示のReactPlayerコンポーネント */}
       <div className="hidden">
         <ReactPlayer
           ref={playerRef}
@@ -131,23 +128,21 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlay
           config={{
             youtube: {
               playerVars: {
-                disablekb: 1, // キーボードコントロールを無効化
-                enablejsapi: 1, // YouTube JavaScript APIを有効化
-                origin: window.location.origin, // オリジンを指定
-                host: "https://www.youtube-nocookie.com", // プライバシー強化モードを使用
-                modestbranding: 1, // YouTubeロゴを最小限に
-                rel: 0, // 関連動画を非表示
-                showinfo: 0, // 動画情報を非表示
-                iv_load_policy: 3, // アノテーションを無効化
+                disablekb: 1,
+                enablejsapi: 1,
+                origin: window.location.origin,
+                host: "https://www.youtube-nocookie.com",
+                modestbranding: 1,
+                rel: 0,
+                showinfo: 0,
+                iv_load_policy: 3,
               },
             },
           }}
         />
       </div>
 
-      {/* カスタムコントロール */}
       <div className="flex items-center gap-4">
-        {/* 再生/一時停止ボタン */}
         <button
           onClick={handlePlayPause}
           className="p-2 rounded-full hover:bg-gray-700 transition-colors"
@@ -160,14 +155,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlay
           )}
         </button>
 
-        {/* 進捗バーと時間表示 */}
         <div className="flex-1 flex items-center gap-2">
-          {/* 現在の再生時間 */}
           <span className="text-sm font-medium w-12">
             {formatTime(played * duration)}
           </span>
 
-          {/* シークバー */}
           <div className="flex-1 relative">
             <input
               type="range"
@@ -182,7 +174,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange, isPlay
             />
           </div>
 
-          {/* 総再生時間 */}
           <span className="text-sm font-medium w-12">
             {formatTime(duration)}
           </span>
