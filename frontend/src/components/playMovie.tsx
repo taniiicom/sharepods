@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 
 interface MusicPlayerProps {
   url: string;
   onProgressChange?: (progress: number) => void;
   isPlaying: boolean;
-  setIsPlaying: any;
+  setIsPlaying: (isPlaying: boolean) => void;
   // 現在の再生時間（秒）を制御するための新しいプロップス
   currentTimeSeconds?: number;
 }
