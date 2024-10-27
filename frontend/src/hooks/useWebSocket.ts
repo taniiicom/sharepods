@@ -1,5 +1,9 @@
 import { useState, useRef } from "react";
 
+interface callWebSocketProps {
+  id: string;
+}
+
 interface WsMessage {
   play_time?: number;
   isPlay?: boolean;
@@ -11,11 +15,11 @@ const useWebSocket = () => {
   const [wsIsPlaying, setWsIsPlaying] = useState<boolean>(false);
   const [isSharing, setIsSharing] = useState<boolean>(false);
   const ws = useRef<WebSocket | null>(null);
-  const callWebSocket = () => {
+  const callWebSocket = ({ id }: callWebSocketProps) => {
     if (ws && ws.current?.readyState === WebSocket.OPEN) {
       return;
     }
-    ws.current = new WebSocket("ws://api.sharepods.p1ass.com/ws");
+    ws.current = new WebSocket(`ws://api.sharepods.p1ass.com/ws?id=${id}`);
 
     ws.current.onmessage = (event) => {
       const data: WsMessage = JSON.parse(event.data);
