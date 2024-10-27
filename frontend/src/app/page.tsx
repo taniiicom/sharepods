@@ -118,7 +118,7 @@ export default function MusicPage() {
             />
           </div>
         </div>
-        {!nfcSupported ? (
+        {nfcSupported ? (
           <button onClick={() => {
             handleNfcScan();
           }} className="font-serif flex justify-center font-light mt-1 w-full">NFCスキャン開始</button>
