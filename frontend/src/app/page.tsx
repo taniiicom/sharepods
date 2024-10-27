@@ -32,9 +32,7 @@ export default function MusicPage() {
   };
 
 
-  const handleProgressChange = async () => {
-    // setCurrentProgress(progress);
-
+  const handleProgressChange = async (progress: number) => {
     if (watchParty) {
       try {
         await fetch("https://api.sharepods.p1ass.com/watchparty", {
@@ -45,7 +43,7 @@ export default function MusicPage() {
             url: watchParty.url,
             lat: latitude,
             lon: longitude,
-            current_time: watchParty.play_time,
+            current_time: progress,
           }),
         });
       } catch (error) {
