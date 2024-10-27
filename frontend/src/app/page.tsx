@@ -8,6 +8,7 @@ import useNFCListener from "@/hooks/useNFCListener";
 import { useWaveAnimationActive } from "@/hooks/useWaveAnimationActive";
 import { ChangeEvent, useId } from "react";
 import MusicPlayer from "./../components/playMovie";
+import WatchParty from "@/types/WatchParty";
 
 
 export default function MusicPage() {
@@ -35,6 +36,14 @@ export default function MusicPage() {
   const { direction, setDirection } = useDirection('down');
   const { isWaveAnimationActive, setIsWaveAnimationActive } = useWaveAnimationActive(false);
 
+
+  const handleDebugNFC = async ()=>{
+    const res = await fetch(
+        `https://api.sharepods.p1ass.com/watchparty?lat=${latitude}&lon=${longitude}`,
+    );
+    const watchParty: WatchParty = await res.json();
+    setWatchParty(watchParty);
+  }
 
 
   const handleProgressChange = async (progress: number) => {
@@ -75,6 +84,16 @@ export default function MusicPage() {
             <input type="url" id="website" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="flowbite.com" required onChange={(e) => handleSongSelect(e)}/>
           </div>
         </div>
+        {nfcSupported ? (
+            <button onClick={handleNfcScan}>NFCスキャン開始</button>
+        ): (
+            <>
+              <p>NFCに対応していません</p>
+              <button className={"border-2"} onClick={async ()=>{
+                await handleDebugNFC()
+              }}>[debug用] NFCスキャンをしたことにしてAPIを叩くボタン</button>
+            </>
+        )}
       </div>
       {/* Player */}
       {watchParty && (
@@ -82,9 +101,6 @@ export default function MusicPage() {
           url={watchParty.url}
           onProgressChange={handleProgressChange}
         />
-      )}
-      {nfcSupported && (
-        <button onClick={handleNfcScan}>NFCスキャン開始</button>
       )}
     </WaveAnimation>
   );
