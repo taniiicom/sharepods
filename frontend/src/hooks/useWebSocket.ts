@@ -24,7 +24,10 @@ const useWebSocket = () => {
     ws.current.onmessage = (event) => {
       const data: WsMessage = JSON.parse(event.data);
 
-      console.log(`data: ${data}`)
+      console.log(`data: ${data}`);
+      console.log(`data.play_time: ${data.play_time}`);
+      console.log(`data.isPlay: ${data.isPlay}`);
+      console.log(`data.numPlayers: ${data.numPlayers}`);
       if (data.play_time) {
         setWsCurrentSeekTime(data.play_time);
       } else if (data.isPlay) {
