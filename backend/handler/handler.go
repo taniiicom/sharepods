@@ -110,6 +110,7 @@ func (h *handler) UpsertWatchParty(req apimodel.CreateWatchpartyRequest) (*apimo
 		db.WatchParty.Longitude.Set(float64(req.Lon)),
 		db.WatchParty.URL.Set(req.Url),
 		db.WatchParty.PlayTime.Set(int(req.CurrentTime)),
+		db.WatchParty.ID.Set(req.Id),
 	).Update(
 		db.WatchParty.Latitude.Set(float64(req.Lat)),
 		db.WatchParty.Longitude.Set(float64(req.Lon)),
