@@ -97,7 +97,7 @@ func (h *handler) FindWatchPartyInRange(lat, lon, tolerance float64) (*apimodel.
 		Id:       wp.ID,
 		Lat:      float32(wp.Latitude),
 		Lon:      float32(wp.Longitude),
-		PlayTime: float32(float64(wp.PlayTime) + time.Now().Sub(wp.CreatedAt).Seconds()),
+		PlayTime: float32(float64(wp.PlayTime) + time.Now().Sub(wp.UpdatedAt).Seconds()),
 		Url:      wp.URL,
 	}, nil
 }
