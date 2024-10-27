@@ -5,7 +5,9 @@ export default function DebugNFCPage() {
   const { nfcSupported, watchParty, handleNfcScan } = useNFCListener({
     latitude: 1000, // テスト用数値
     longitude: 1000, // テスト用数値
-  });
+    onFetch: async (watchParty) => {
+      console.log(watchParty);
+  }});
 
   return <div>
     <p>nfcSupported: {nfcSupported.toString()}</p>
