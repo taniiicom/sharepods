@@ -7,32 +7,28 @@ import MusicPlayer from "./../components/playMovie";
 
 interface Song {
   id: string;
-  title: string;
-  artist: string;
   url: string;
   progress?: number;
 }
 
 export default function MusicPage() {
-  const [currentProgress, setCurrentProgress] = useState<number>(0);
+  // const [currentProgress, setCurrentProgress] = useState<number>(0);
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
 
   const songs: Song[] = [
     {
       id: "1",
-      title: "Never Gonna Give You Up",
-      artist: "Rick Astley",
-      url: "https://www.youtube.com/watch?v=fhTFysCtF6g",
+      url: "https://www.youtube.com/watch?v=3nSBhYZ59h0&list=RD3nSBhYZ59h0&start_radio=1",
     },
   ];
 
   const handleSongSelect = (song: Song) => {
     setSelectedSong(song);
-    setCurrentProgress(song.progress || 0);
+    // setCurrentProgress(song.progress || 0);
   };
 
   const handleProgressChange = async (progress: number) => {
-    setCurrentProgress(progress);
+    // setCurrentProgress(progress);
 
     if (selectedSong) {
       try {
@@ -40,7 +36,6 @@ export default function MusicPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            songId: selectedSong.id,
             progress,
           }),
         });
@@ -69,13 +64,6 @@ export default function MusicPage() {
                   }`}
                 onClick={() => handleSongSelect(song)}
               >
-                <div className="font-medium">{song.title}</div>
-                <div className="text-sm text-gray-600">{song.artist}</div>
-                {selectedSong?.id === song.id && (
-                  <div className="text-sm text-blue-600 mt-1">
-                    Progress: {currentProgress.toFixed(1)}%
-                  </div>
-                )}
               </div>
             ))}
           </div>
