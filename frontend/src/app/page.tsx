@@ -44,7 +44,6 @@ export default function MusicPage() {
   const { isWaveAnimationActive, setIsWaveAnimationActive } =
     useWaveAnimationActive(false);
   useEffect(() => {
-    console.log(`isSharing: ${isSharing}`);
     if (isSharing) {
       setIsWaveAnimationActive(true);
     }

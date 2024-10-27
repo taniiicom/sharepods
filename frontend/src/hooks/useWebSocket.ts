@@ -19,11 +19,12 @@ const useWebSocket = () => {
     if (ws && ws.current?.readyState === WebSocket.OPEN) {
       return;
     }
-    ws.current = new WebSocket(`ws://api.sharepods.p1ass.com/ws?id=${id}`);
+    ws.current = new WebSocket(`wss://api.sharepods.p1ass.com/ws?id=${id}`);
 
     ws.current.onmessage = (event) => {
       const data: WsMessage = JSON.parse(event.data);
 
+      console.log(`data: ${data}`)
       if (data.play_time) {
         setWsCurrentSeekTime(data.play_time);
       } else if (data.isPlay) {
