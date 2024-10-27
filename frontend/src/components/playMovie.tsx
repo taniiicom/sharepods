@@ -1,13 +1,18 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 
 // コンポーネントのプロップス型定義
 interface MusicPlayerProps {
   url: string; // 再生する音楽/動画のURL
   onProgressChange?: (progress: number) => void; // 進捗変更時のコールバック（0-100の値）
+  wsCurrentSeekTime: number;
 }
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange }) => {
+const MusicPlayer: React.FC<MusicPlayerProps> = ({
+  url,
+  onProgressChange,
+  wsCurrentSeekTime,
+}) => {
   // ReactPlayerのインスタンスを参照するためのref
   const playerRef = useRef<ReactPlayer | null>(null);
 
@@ -24,6 +29,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ url, onProgressChange }) => {
     played: 0,
     seeking: false,
   });
+
+  useEffect(() => {
+    handleSeek(wsCurrentSeekTime);
+    setPlayed(wsCurrentSeekTime / duration);
+  }, [wsCurrentSeekTime, duration]);
 
   // 再生状態が変化したかどうかをチェックする関数
   const hasStateChanged = (currentPlayed: number) => {
