@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import WatchParty from "@/types/WatchParty";
 import GeographicalLocation from "@/types/GeographicalLocation";
+import WatchParty from "@/types/WatchParty";
+import { useEffect, useState } from "react";
 
 const useNFCListener = ({ latitude, longitude }: GeographicalLocation) => {
   const [nfcSupported, setNfcSupported] = useState(false);
@@ -22,7 +22,9 @@ const useNFCListener = ({ latitude, longitude }: GeographicalLocation) => {
       const nfcReader = new window.NDEFReader();
       await nfcReader.scan();
       nfcReader.onreadingerror = async () => {
-        const res = await fetch(`?lat=${latitude}&lon=${longitude}`);
+        const res = await fetch(
+          `https://api.sharepods.p1ass.com/watchparty?lat=${latitude}&lon=${longitude}`,
+        );
         const watchParty: WatchParty = await res.json();
         setWatchParty(watchParty);
         setMessage("NFCイベント発生！！！");
