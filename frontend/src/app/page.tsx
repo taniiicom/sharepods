@@ -6,6 +6,7 @@ import useGeolocation from "@/hooks/useGeolocation";
 import useNFCListener from "@/hooks/useNFCListener";
 import { ChangeEvent, useId } from "react";
 import MusicPlayer from "./../components/playMovie";
+import WatchParty from "@/types/WatchParty";
 
 
 export default function MusicPage() {
@@ -30,6 +31,14 @@ export default function MusicPage() {
     });
     console.log(watchParty);
   };
+
+  const handleDebugNFC = async ()=>{
+    const res = await fetch(
+        `https://api.sharepods.p1ass.com/watchparty?lat=${latitude}&lon=${longitude}`,
+    );
+    const watchParty: WatchParty = await res.json();
+    setWatchParty(watchParty);
+  }
 
 
   const handleProgressChange = async (progress: number) => {
@@ -76,8 +85,13 @@ export default function MusicPage() {
           onProgressChange={handleProgressChange}
         />
       )}
-      {nfcSupported && (
+      {nfcSupported ? (
         <button onClick={handleNfcScan}>NFCスキャン開始</button>
+      ): (
+          <>
+            <p>NFCに対応していません</p>
+            <button onClick={handleDebugNFC}>[debug用] NFCスキャンをしたことにしてAPIを叩くボタン</button>
+          </>
       )}
     </WaveAnimation>
   );
