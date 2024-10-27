@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/taniiicom/sharepods/backend/infrastructure/datamodel/apimodel"
@@ -96,7 +97,7 @@ func (h *handler) FindWatchPartyInRange(lat, lon, tolerance float64) (*apimodel.
 		Id:       wp.ID,
 		Lat:      float32(wp.Latitude),
 		Lon:      float32(wp.Longitude),
-		PlayTime: float32(wp.PlayTime),
+		PlayTime: float32(float64(wp.PlayTime) + time.Now().Sub(wp.CreatedAt).Seconds()),
 		Url:      wp.URL,
 	}, nil
 }
