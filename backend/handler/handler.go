@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/taniiicom/sharepods/backend/infrastructure/datamodel/apimodel"
 	db "github.com/taniiicom/sharepods/backend/infrastructure/datamodel/dbmodel"
-	realtime "github.com/taniiicom/sharepods/backend/realtime"
+	"github.com/taniiicom/sharepods/backend/realtime"
 )
 
 const tolerance = 0.00045 // 約50mの誤差
@@ -48,21 +48,13 @@ func (h *handler) GetWatchParty(c echo.Context) error {
 	}
 
 	watchParty, err := h.FindWatchPartyInRange(lat, lon, tolerance)
-	if err != nil {
+	if err != nil || watchParty == nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
-			"message": "There is no watch party",
+			"message": "No watch party found",
 		})
 	}
 
-	if watchParty == nil {
-		return c.JSON(http.StatusNotFound, echo.Map{
-			"message": "No watch party found within the tolerance range",
-		})
-	}
-
-	// WebSocket グループに参加
-	h.wsManager.JoinGroup(watchParty.Id, c)
-
+	// WatchPartyオブジェクトを返す
 	return c.JSON(http.StatusOK, watchParty)
 }
 
@@ -82,9 +74,7 @@ func (h *handler) CreateOrUpdateWatchParty(c echo.Context) error {
 		})
 	}
 
-	// WebSocket グループに参加
-	h.wsManager.JoinGroup(watchParty.Id, c)
-
+	// WatchPartyオブジェクトを返す
 	return c.JSON(http.StatusOK, watchParty)
 }
 
