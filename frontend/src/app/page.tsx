@@ -90,7 +90,9 @@ export default function MusicPage() {
       ): (
           <>
             <p>NFCに対応していません</p>
-            <button onClick={handleDebugNFC}>[debug用] NFCスキャンをしたことにしてAPIを叩くボタン</button>
+            <button onClick={async ()=>{
+              await handleDebugNFC()
+            }}>[debug用] NFCスキャンをしたことにしてAPIを叩くボタン</button>
           </>
       )}
     </WaveAnimation>
