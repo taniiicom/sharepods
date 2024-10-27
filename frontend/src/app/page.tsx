@@ -1,101 +1,151 @@
-import Image from "next/image";
+// app/page.tsx
+"use client";
 
-export default function Home() {
+import WaveAnimation from "@/components/WaveAnimation";
+import { useDirection } from "@/hooks/useDirection";
+import useGeolocation from "@/hooks/useGeolocation";
+import useNFCListener from "@/hooks/useNFCListener";
+// import { usePlayed } from "@/hooks/usePlayed";
+// import { usePlaying } from "@/hooks/usePlaying";
+import { usePlaying } from "@/hooks/usePlaying";
+import { useWaveAnimationActive } from "@/hooks/useWaveAnimationActive";
+import WatchParty from "@/types/WatchParty";
+import { ChangeEvent, useId, useState } from "react";
+import MusicPlayer from "./../components/playMovie";
+
+export default function MusicPage() {
+  const { coordinates } = useGeolocation();
+  const [status, setStatus] = useState<"sender" | "reciever">("reciever");
+  const latitude = coordinates?.[0] ?? 0;
+  const longitude = coordinates?.[1] ?? 0;
+  const id = useId();
+  const { direction, setDirection } = useDirection("down");
+  const onFetch = async (watchParty: WatchParty) => {
+    watchParty.play_time += 1.2;
+    setWatchParty(watchParty);
+    setIsPlaying(true);
+    setIsWaveAnimationActive(true);
+    setStatus("reciever");
+    setDirection("down");
+  }
+
+  const { nfcSupported, watchParty, handleNfcScan, setWatchParty } =
+    useNFCListener({
+      latitude: latitude,
+      longitude: longitude,
+      onFetch: onFetch,
+    });
+  const handleSongSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setWatchParty({
+      id: id,
+      lat: latitude,
+      lon: longitude,
+      url: url,
+      play_time: 0,
+    });
+    console.log(watchParty);
+    setStatus("sender");
+  };
+  const { isWaveAnimationActive, setIsWaveAnimationActive } =
+    useWaveAnimationActive(false);
+  const { isPlaying, setIsPlaying } = usePlaying();
+
+  // const { played, setPlayed } = usePlayed();
+
+  // const handleDebugNFC = async () => {
+  //   const res = await fetch(
+  //     `https://api.sharepods.p1ass.com/watchparty?lat=${latitude}&lon=${longitude}`
+  //   );
+  //   const watchParty: WatchParty = await res.json();
+  //   watchParty.play_time += 1.2;
+  //   setWatchParty(watchParty);
+  //   setIsPlaying(true);
+  //   // setPlayed(watchParty.play_time % duration);
+  //   // setIsPlaying(true);
+  //   setStatus("reciever");
+  //   setIsWaveAnimationActive(true);
+  //   setDirection("down");
+  // };
+
+  const handleProgressChange = async (progress: number) => {
+    if (watchParty && status === "sender") {
+      try {
+        await fetch("https://api.sharepods.p1ass.com/watchparty", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: id,
+            url: watchParty.url,
+            lat: latitude,
+            lon: longitude,
+            current_time: progress,
+          }),
+        });
+        setIsWaveAnimationActive(true);
+        setDirection("up");
+      } catch (error) {
+        console.error("Failed to save progress:", error);
+      }
+    }
+  };
+
+  // types/layout.ts
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <WaveAnimation
+      isWaveAnimationActive={isWaveAnimationActive}
+      direction={direction}
+    >
+      <h1 className="text-3xl font-bold mb-6 z-10 relative font-serif flex justify-center">Share Pods</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      {/* Song List */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-40 z-10 relative">
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="website"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white font-serif"
+            >
+            </label>
+            <input
+              type="url"
+              id="website"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 font-serif"
+              placeholder="https://www.youtube.com/"
+              required
+              onChange={(e) => handleSongSelect(e)}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        {nfcSupported ? (
+          <button onClick={() => {
+            handleNfcScan();
+          }} className="font-serif flex justify-center font-light mt-1 w-full">NFCスキャン開始</button>
+        ) : (
+          <>
+            <p className="font-serif flex justify-center">NFCに対応していません</p>
+            {/* <button
+              className={"border-2"}
+              onClick={async () => {
+                await handleDebugNFC();
+              }}
+            >
+              [debug用] NFCスキャンをしたことにしてAPIを叩くボタン
+            </button> */}
+          </>
+        )}
+      </div>
+      {/* Player */}
+      {watchParty && (
+        <MusicPlayer
+          url={watchParty.url}
+          setIsPlaying={setIsPlaying}
+          isPlaying={isPlaying}
+          onProgressChange={handleProgressChange}
+          currentTimeSeconds={watchParty.play_time}
+        />
+      )}
+    </WaveAnimation>
   );
 }
