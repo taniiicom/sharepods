@@ -3,16 +3,20 @@
 
 import WaveAnimation from "@/components/WaveAnimation";
 import { useDirection } from "@/hooks/useDirection";
+import { useDuration } from "@/hooks/useDuration";
 import useGeolocation from "@/hooks/useGeolocation";
 import useNFCListener from "@/hooks/useNFCListener";
+import { usePlayed } from "@/hooks/usePlayed";
+import { usePlaying } from "@/hooks/usePlaying";
 import { useWaveAnimationActive } from "@/hooks/useWaveAnimationActive";
-import { ChangeEvent, useId } from "react";
-import MusicPlayer from "./../components/playMovie";
 import WatchParty from "@/types/WatchParty";
+import { ChangeEvent, useId, useState } from "react";
+import MusicPlayer from "./../components/playMovie";
 
 
 export default function MusicPage() {
   const { coordinates } = useGeolocation();
+  const [status, setStatus] = useState<"sender" | "reciever">("reciever");
   const latitude = coordinates?.[0] ?? 0;
   const longitude = coordinates?.[1] ?? 0;
   const id = useId();
@@ -32,9 +36,13 @@ export default function MusicPage() {
       play_time: 0,
     });
     console.log(watchParty);
+    setStatus("sender");
   };
   const { direction, setDirection } = useDirection('down');
   const { isWaveAnimationActive, setIsWaveAnimationActive } = useWaveAnimationActive(false);
+  const { isPlaying, setIsPlaying } = usePlaying();
+  const { duration, setDuration } = useDuration();
+  const { played, setPlayed } = usePlayed();
 
 
   const handleDebugNFC = async ()=>{
@@ -43,11 +51,14 @@ export default function MusicPage() {
     );
     const watchParty: WatchParty = await res.json();
     setWatchParty(watchParty);
+    setPlayed(watchParty.play_time % duration);
+    setIsPlaying(true);
+    setStatus("reciever");
   }
 
 
   const handleProgressChange = async (progress: number) => {
-    if (watchParty) {
+    if (watchParty && status === "sender") {
       try {
         await fetch("https://api.sharepods.p1ass.com/watchparty", {
           method: "POST",
@@ -76,7 +87,7 @@ export default function MusicPage() {
       <h1 className="text-3xl font-bold mb-6 z-10 relative">Share Pods</h1>
 
       {/* Song List */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-20 z-10 relative">
+      <div className="bg-white rounded-lg shadow-md p-6 mb-20 z-10 relative w-fit">
         <h2 className="text-xl font-semibold mb-4">Songs</h2>
         <div className="space-y-4">
           <div>
@@ -100,6 +111,13 @@ export default function MusicPage() {
         <MusicPlayer
           url={watchParty.url}
           onProgressChange={handleProgressChange}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          setDuration={setDuration}
+          duration={duration}
+          played={played}
+          setPlayed={setPlayed}
+          status={status}
         />
       )}
     </WaveAnimation>
