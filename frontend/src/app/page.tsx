@@ -53,20 +53,20 @@ export default function MusicPage() {
 
   // const { played, setPlayed } = usePlayed();
 
-  const handleDebugNFC = async () => {
-    const res = await fetch(
-      `https://api.sharepods.p1ass.com/watchparty?lat=${latitude}&lon=${longitude}`
-    );
-    const watchParty: WatchParty = await res.json();
-    watchParty.play_time += 1.2;
-    setWatchParty(watchParty);
-    setIsPlaying(true);
-    // setPlayed(watchParty.play_time % duration);
-    // setIsPlaying(true);
-    setStatus("reciever");
-    setIsWaveAnimationActive(true);
-    setDirection("down");
-  };
+  // const handleDebugNFC = async () => {
+  //   const res = await fetch(
+  //     `https://api.sharepods.p1ass.com/watchparty?lat=${latitude}&lon=${longitude}`
+  //   );
+  //   const watchParty: WatchParty = await res.json();
+  //   watchParty.play_time += 1.2;
+  //   setWatchParty(watchParty);
+  //   setIsPlaying(true);
+  //   // setPlayed(watchParty.play_time % duration);
+  //   // setIsPlaying(true);
+  //   setStatus("reciever");
+  //   setIsWaveAnimationActive(true);
+  //   setDirection("down");
+  // };
 
   const handleProgressChange = async (progress: number) => {
     if (watchParty && status === "sender") {
@@ -97,24 +97,22 @@ export default function MusicPage() {
       isWaveAnimationActive={isWaveAnimationActive}
       direction={direction}
     >
-      <h1 className="text-3xl font-bold mb-6 z-10 relative">Share Pods</h1>
+      <h1 className="text-3xl font-bold mb-6 z-10 relative font-serif flex justify-center">Share Pods</h1>
 
       {/* Song List */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-20 z-10 relative w-fit">
-        <h2 className="text-xl font-semibold mb-4">Songs</h2>
+      <div className="bg-white rounded-lg shadow-md p-6 mb-40 z-10 relative">
         <div className="space-y-4">
           <div>
             <label
               htmlFor="website"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white font-serif"
             >
-              URL
             </label>
             <input
               type="url"
               id="website"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="flowbite.com"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 font-serif"
+              placeholder="https://www.youtube.com/"
               required
               onChange={(e) => handleSongSelect(e)}
             />
@@ -123,18 +121,18 @@ export default function MusicPage() {
         {nfcSupported ? (
           <button onClick={() => {
             handleNfcScan();
-          }}>NFCスキャン開始</button>
+          }} className="font-serif">NFCスキャン開始</button>
         ) : (
           <>
-            <p>NFCに対応していません</p>
-            <button
+            <p className="font-serif flex justify-center">NFCに対応していません</p>
+            {/* <button
               className={"border-2"}
               onClick={async () => {
                 await handleDebugNFC();
               }}
             >
               [debug用] NFCスキャンをしたことにしてAPIを叩くボタン
-            </button>
+            </button> */}
           </>
         )}
       </div>
