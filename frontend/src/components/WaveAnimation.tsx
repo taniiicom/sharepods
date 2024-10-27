@@ -4,20 +4,15 @@ import Wave from './Wave';
 
 interface WaveAnimationProps {
   children: React.ReactNode;
+  isWaveAnimationActive: boolean;
+  direction: 'up' | 'down';
 }
-const WaveAnimation: React.FC<WaveAnimationProps> = ({ children }) => {
+const WaveAnimation: React.FC<WaveAnimationProps> = ({ children, isWaveAnimationActive, direction }) => {
   const [isBubbleActive, setIsBubbleActive] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isWaveAnimationActive, setIsWaveAnimationActive] = useState(
-    true
-  );
 
   const handleAnimationEnd = () => {
     setIsBubbleActive(true);
   };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [direction, setDirection] = useState<'up' | 'down'>('up');
 
   return (
     <div className="overflow-hidden mx-auto w-full h-screen bg-white/10 shadow-custom ">

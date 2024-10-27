@@ -87,7 +87,7 @@ func (h *handler) FindWatchPartyInRange(lat, lon, tolerance float64) (*apimodel.
 		db.WatchParty.Latitude.Lt(lat+tolerance),
 		db.WatchParty.Longitude.Gt(lon-tolerance),
 		db.WatchParty.Longitude.Lt(lon+tolerance),
-	).Exec(context.Background())
+	).OrderBy(db.WatchParty.CreatedAt.Order(db.SortOrderDesc)).Exec(context.Background())
 	if err != nil {
 		return nil, err
 	}

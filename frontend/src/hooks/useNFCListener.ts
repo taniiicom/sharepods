@@ -35,7 +35,7 @@ const useNFCListener = ({ latitude, longitude }: GeographicalLocation) => {
     }
   };
 
-  return { nfcSupported, watchParty, message, handleNfcScan };
+  return { nfcSupported, watchParty, setWatchParty, message, handleNfcScan };
 };
 
 /**
