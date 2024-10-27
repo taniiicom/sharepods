@@ -2,8 +2,10 @@
 "use client";
 
 import WaveAnimation from "@/components/WaveAnimation";
+import { useDirection } from "@/hooks/useDirection";
 import useGeolocation from "@/hooks/useGeolocation";
 import useNFCListener from "@/hooks/useNFCListener";
+import { useWaveAnimationActive } from "@/hooks/useWaveAnimationActive";
 import { ChangeEvent, useId } from "react";
 import MusicPlayer from "./../components/playMovie";
 
@@ -30,6 +32,9 @@ export default function MusicPage() {
     });
     console.log(watchParty);
   };
+  const { direction, setDirection } = useDirection('down');
+  const { isWaveAnimationActive, setIsWaveAnimationActive } = useWaveAnimationActive(false);
+
 
 
   const handleProgressChange = async (progress: number) => {
@@ -46,6 +51,8 @@ export default function MusicPage() {
             current_time: progress,
           }),
         });
+        setIsWaveAnimationActive(true);
+        setDirection('up');
       } catch (error) {
         console.error("Failed to save progress:", error);
       }
@@ -56,7 +63,7 @@ export default function MusicPage() {
   // types/layout.ts
 
   return (
-    <WaveAnimation>
+    <WaveAnimation isWaveAnimationActive={isWaveAnimationActive} direction={direction}>
       <h1 className="text-3xl font-bold mb-6 z-10 relative">Share Pods</h1>
 
       {/* Song List */}
